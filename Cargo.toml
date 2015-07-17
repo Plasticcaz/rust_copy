@@ -1,0 +1,4 @@
+[package]
+name = "rust_cp"
+version = "0.1.0"
+authors = ["Zachary Winter <plasticcaz@gmail.com>"]
