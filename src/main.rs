@@ -7,38 +7,27 @@
 //! From command line, run "./rust_cp <source_file> <destination>"
 
 fn main() {
-    use std::io::prelude::*;
-    use std::fs::File;
 
     let args: Vec<String> = std::env::args().collect();
 
     if args.len() == 3 {
-        // Attempt to open the specified file.
-        let fresult = File::open(&args[1]);
-        match fresult {
-            Ok(mut input) => {
-                let mut buffer: Vec<u8> = Vec::new();
-                match input.read_to_end(&mut buffer) {
-                    Ok(_) => {
-                        // Attempt to write to specified destination.
-                        let fresult = File::create(&args[2]);
-                        match fresult {
-                            Ok(mut output) => {
-                                match output.write_all(buffer.as_ref()) {
-                                    Ok(_) => (), // We've accomplished our task.
-                                    Err(msg) => println!("Error: {}", msg),
-                                }
-                            },
-                            Err(msg) => println!("Error: {}", msg),
-                        }
-                    },
-                    Err(msg) => println!("Error: {}", msg),
-                }
-            },
+        match copy(&args[1], &args[2]) {
+            Ok(()) => (),
             Err(msg) => println!("Error: {}", msg),
-        } // Holy Error Handling Batman!
+        }
+    } else {
+        println!("Please rerun in following format: './rust_cp <source_file> <destination>'.");
     }
-    else {
-        println!("Run: \"{} {} {}\"", &args[0], "<original_file>", "<new_file>");
-    }
+}
+
+
+fn copy(input: &str, output: &str) -> std::io::Result<()> {
+    use std::fs::File;
+    use std::io::{Read, Write};
+    let mut input = File::open(input)?;
+    let mut buffer: Vec<u8> = Vec::new();
+    input.read_to_end(&mut buffer)?;
+    let mut output = File::create(output)?;
+    output.write_all(buffer.as_ref())?;
+    Ok(())
 }
