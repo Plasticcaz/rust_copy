@@ -24,10 +24,12 @@ fn main() {
 fn copy(input: &str, output: &str) -> std::io::Result<()> {
     use std::fs::File;
     use std::io::{Read, Write};
-    let mut input = File::open(input)?;
+    let input = File::open(input)?;
+    let mut input = std::io::BufReader::new(input);
     let mut buffer: Vec<u8> = Vec::new();
     input.read_to_end(&mut buffer)?;
-    let mut output = File::create(output)?;
+    let output = File::create(output)?;
+    let mut output = std::io::BufWriter::new(output);
     output.write_all(buffer.as_ref())?;
     Ok(())
 }
